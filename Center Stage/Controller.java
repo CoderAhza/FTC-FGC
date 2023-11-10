@@ -13,8 +13,12 @@ public class Controller extends LinearOpMode {
  private ElapsedTime runtime = new ElapsedTime();
  private DcMotor motorKanan = null;
  private DcMotor motorKiri = null;
- private DcMotor sliderBelakang = null;
- private DcMotor sliderDepan = null;
+ private DcMotor lifter = null;
+ private DcMotor armRotation = null;
+ private DcMotor armLength = null;
+ 
+ //private DcMotor sliderBelakang = null;
+ //private DcMotor sliderDepan = null;
 
  double speed = 0;
  @Override
@@ -26,15 +30,25 @@ public class Controller extends LinearOpMode {
  // step (using the FTC Robot Controller app on the phone).
  motorKanan = hardwareMap.get(DcMotor.class, "kanan");
  motorKiri = hardwareMap.get(DcMotor.class, "kiri");
- sliderBelakang = hardwareMap.get(DcMotor.class, "sliderBelakang");
- sliderDepan = hardwareMap.get(DcMotor.class, "sliderDepan");
+ lifter = hardwareMap.get(DcMotor.class, "lifter");
+ armRotation = hardwareMap.get(DcMotor.class, "armRot");
+ armLength = hardwareMap.get(DcMotor.class, "armLength");
+
+ //sliderBelakang = hardwareMap.get(DcMotor.class, "sliderBelakang");
+ //sliderDepan = hardwareMap.get(DcMotor.class, "sliderDepan");
 
  // Most robots need the motor on one side to be reversed to drive forward
  // Reverse the motor that runs backwards when connected directly to the battery
- motorKanan.setDirection(DcMotor.Direction.REVERSE);
- motorKiri.setDirection(DcMotor.Direction.FORWARD);
- sliderBelakang.setDirection(DcMotor.Direction.FORWARD);
- sliderDepan.setDirection(DcMotor.Direction.REVERSE);
+ motorKanan.setDirection(DcMotor.Direction.FORWARD);
+ motorKiri.setDirection(DcMotor.Direction.REVERSE);
+ lifter.setDirection(DcMotor.Direction.FORWARD);
+ armRotation.setDirection(DcMotor.Direction.FORWARD);
+ armLength.setDirection(DcMotor.Direction.FORWARD);
+ 
+ 
+ 
+ //sliderBelakang.setDirection(DcMotor.Direction.FORWARD);
+ //sliderDepan.setDirection(DcMotor.Direction.REVERSE);
 
  // Wait for the game to start (driver presses PLAY)
  waitForStart();
@@ -46,8 +60,6 @@ public class Controller extends LinearOpMode {
  //DRIVETRAIN
  double kananPower;
  double kiriPower;
- double sliderBelakangPower;
- double sliderDepanPower;
  
  // Choose to drive using either Tank Mode, or POV Mode
  // Comment out the method that's not used. The default below is POV.
@@ -59,26 +71,55 @@ public class Controller extends LinearOpMode {
   speed = 0.5;
  }
  
+ if (gamepad1.y==true) {
+  lifter.setPower(-1);
+
+ }else if (gamepad1.a==true) {
+  lifter.setPower(1);
+  
+ }else {
+  lifter.setPower(0);
+  
+ }
+ 
+ if (gamepad2.x==true){
+  armRotation.setPower(-0.7);
+  
+ }else if (gamepad2.b==true){
+  armRotation.setPower(0.7);
+  
+ }else {
+  armRotation.setPower(0);
+ }
+ 
+if (gamepad2.y==true){
+  armLength.setPower(1);
+  
+ }else if (gamepad2.a==true){
+  armLength.setPower(-1);
+  
+ }else {
+  armLength.setPower(0);
+ }
+ 
+ 
  double drive = gamepad1.left_stick_y * speed;
  double turn = gamepad1.left_stick_x * speed;
- double slide_y = gamepad1.right_stick_x;
+ //double slide_y = gamepad1.right_stick_x;
  
  kananPower = Range.clip(drive - turn, -1.0, 1.0) ;
  kiriPower = Range.clip(drive + turn, -1.0, 1.0) ;
- sliderBelakangPower = Range.clip((slide_y - turn), -1.0, 1.0);
- sliderDepanPower = Range.clip((slide_y + turn), -1.0, 1.0);
-
- motorKanan.setPower(kananPower);
- motorKiri.setPower(kiriPower);
- sliderBelakang.setPower(sliderBelakangPower);
- sliderDepan.setPower(sliderDepanPower);
+ 
+ //sliderBelakangPower = Range.clip((slide_y - turn), -1.0, 1.0);
+ //sliderDepanPower = Range.clip((slide_y + turn), -1.0, 1.0);
 
  
- // if (gamepad1.b== true) {
- // motorTengah.setPower(-1);
- // } else {
- // motorTengah.setPower(0);
- // }
+ motorKanan.setPower(kananPower);
+ motorKiri.setPower(kiriPower);
+ //sliderBelakang.setPower(sliderBelakangPower);
+ //sliderDepan.setPower(sliderDepanPower);
+
+ 
  
  // if (gamepad1.x == true) {
  // motorTengah.setPower(1);
@@ -110,7 +151,7 @@ public class Controller extends LinearOpMode {
  
  // Show the elapsed game time and wheel power
  telemetry.addData("Status", "Run Time: " + runtime.toString());
- telemetry.addData("Motors", "kanan (%.2f), slider  (%.2f)", kananPower, kiriPower, sliderBelakangPower, sliderDepanPower);
+ telemetry.addData("Motors", "kanan (%.2f)", kananPower, kiriPower);
  telemetry.update();
  }
  }
